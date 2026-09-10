@@ -1462,6 +1462,33 @@ plot_2D_vs_3D_correlation_vs_structure_by_metric_and_pair_A_B_for_random_slice_b
   return(fig)
 }
 
+# plot correlation vs structure by metric and pair A/B for random slice
+plot_correlation_vs_structure_by_metric_and_pair_A_B_for_random_slice_dot_plot <- function(plot_df,
+                                                                                           metrics) {
+  
+  # Update metrics (remove _AUC from specific metrics)
+  metrics <- sub("_AUC$", "", metrics)
+  plot_df$metric <- sub("_AUC$", "", plot_df$metric)
+  
+  # Compute spearman correlation
+  corr_df <- plot_df %>%
+    group_by(pair, metric, structure) %>%
+    summarise(
+      corr = cor(value3D, value2D, method = "spearman", use = "complete.obs"),
+      .groups = "drop"
+    )
+  
+  fig <- ggplot(corr_df, aes(x = structure, y = corr)) + 
+    geom_point() +
+    labs(title = "Dot plots showing spearman correlation vs structure, for each metric, for a random slice and cell pair A/B", x = "Structure", y = "Spearman Correlation") + 
+    scale_y_continuous(limits = c(-1, 1)) +
+    theme_minimal() + 
+    theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 1), 
+          axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  return(fig)
+}
+
 # Plot percentage difference vs metric for each pair for a random slice, annotating for tissue structure
 plot_percentage_difference_vs_metric_by_pair_A_B_for_random_slice_showing_structure_box_plot <- function(plot_df,
                                                                                                          metrics,
@@ -1720,6 +1747,15 @@ fig_2D_vs_3D_correlation_vs_structure_by_metric_and_pair_A_B_for_random_slice_ba
 pdf("fig_2D_vs_3D_correlation_vs_structure_by_metric_and_pair_A_B_for_random_slice_bar_plot.pdf", width = 24, height = 10)
 print(fig_2D_vs_3D_correlation_vs_structure_by_metric_and_pair_A_B_for_random_slice_bar_plot)
 dev.off()
+
+
+setwd("~/R/plots/SD1")
+fig_correlation_vs_structure_by_metric_and_pair_A_B_for_random_slice_dot_plot <- plot_correlation_vs_structure_by_metric_and_pair_A_B_for_random_slice_dot_plot(plot_df,
+                                                                                                                                                                metrics)
+pdf("fig_correlation_vs_structure_by_metric_and_pair_A_B_for_random_slice_dot_plot.pdf", width = 15, height = 4)
+print(fig_correlation_vs_structure_by_metric_and_pair_A_B_for_random_slice_dot_plot)
+dev.off()
+
 
 
 setwd("~/R/plots/SD1")

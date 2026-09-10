@@ -22,7 +22,7 @@ library(alphashape3d)
 ### Format data -----
 
 get_gradient <- function(metric) {
-  if (metric %in% c("MS", "NMS", "ACINP", "AE", "ACIN", "CKR", "CLR", "COO", "CGR", "CK", "CL", "CG")) {
+  if (metric %in% c("MS", "NMS", "ACINP", "AE", "ACIN", "COO", "CK", "CL", "CG")) {
     return("radius")
   }
   else if (metric %in% c("PBP", "EBP")) {
@@ -49,13 +49,13 @@ get_AUC_for_radii_gradient_metrics <- function(y) {
 radii <- seq(20, 100, 10)
 radii_colnames <- paste("r", radii, sep = "")
 
-gradient_radii_metrics <- c("MS", "NMS", "ACIN", "ANE", "ANC", "CKR", "CLR", "COO", "CGR", "CK", "CL", "CG")
+gradient_radii_metrics <- c("MS", "NMS", "ACIN", "ANE", "ANC", "COO", "CK", "CL", "CG")
 
 
 for (metric in gradient_radii_metrics) {
   metric_AUC_name <- paste(metric, "AUC", sep = "_")
   
-  if (metric %in% c("MS", "NMS", "ANC", "CKR", "CLR", "COO", "CGR", "CK", "CL", "CG")) {
+  if (metric %in% c("MS", "NMS", "ANC", "COO", "CK", "CL", "CG")) {
     subset_colnames <- c("slice", "reference", "target", metric_AUC_name)
   }
   else {

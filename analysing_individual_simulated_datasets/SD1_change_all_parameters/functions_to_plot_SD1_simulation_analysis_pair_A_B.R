@@ -33,6 +33,9 @@ get_plot_df_for_random_slice <- function(metric_df_list,
     # Change slice column to numeric for safety
     metric_df$slice <- as.numeric(metric_df$slice)
     
+    # Ensure simulation column is numeric
+    metric_df$simulation <- as.numeric(metric_df$simulation)
+    
     if (metric %in% c("EBSAC", "EBP_AUC")) {
       # For EBSAC and EBP_AUC, assume pair is the same as cell_types for consistency
       metric_df$pair <- gsub(',', '/', metric_df$cell_types)
@@ -46,24 +49,24 @@ get_plot_df_for_random_slice <- function(metric_df_list,
       metric_df$pair <- paste(metric_df$reference, metric_df$target, sep = "/")
     }
     
-    metric_df$metric <- metric  
-    
     # Select 3D values, when slice == 0, then remove from data frame
-    metric_values3D <- metric_df[[metric]][metric_df[["slice"]] == 0]
-    metric_df <- metric_df[metric_df[["slice"]] != 0, ]
+    metric_df3D <- metric_df[metric_df[["slice"]] == 0, c("simulation", "pair", metric)]
+    colnames(metric_df3D) <- c("simulation", "pair", "value3D")
+    
+    metric_df2D <- metric_df[metric_df[["slice"]] != 0, ]
     
     # Select a random 2D slice
-    metric_df <- metric_df %>%
+    metric_df2D <- metric_df2D %>%
       group_by(simulation, pair) %>%
       slice_sample(n = 1) %>%   # pick one random slice per simulation
       ungroup() %>%
-      select(simulation, pair, metric, value2D = .data[[metric]])
+      select(simulation, pair, value2D = .data[[metric]])
     
     # Combine 3D and 2D values
-    metric_df[["value3D"]] <- metric_values3D
+    metric_df <- left_join(metric_df2D, metric_df3D, by = c("simulation", "pair"))
     
-    # Ensure simulation column is numeric
-    metric_df$simulation <- as.numeric(metric_df$simulation)
+    # Add metric column
+    metric_df$metric <- metric
     
     # Merge metric_df and parameters_df
     parameters_df$simulation <- seq(nrow(parameters_df))
@@ -72,11 +75,8 @@ get_plot_df_for_random_slice <- function(metric_df_list,
     # Get structure column
     metric_df$structure <- paste(metric_df$arrangement, metric_df$shape, sep = "_")
     
-    metric_df$metric <- metric  
-    
     # Subset for A/B pair
     metric_df <- metric_df[metric_df$pair == "A/B", ]
-    
     
     # Add metric_df to plot_df
     plot_df <- rbind(plot_df, metric_df[ , c("value3D", "value2D", "pair", "metric", "structure")])

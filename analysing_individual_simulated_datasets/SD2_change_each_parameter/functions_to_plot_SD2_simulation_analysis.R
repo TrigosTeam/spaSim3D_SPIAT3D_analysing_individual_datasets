@@ -879,7 +879,7 @@ plot_3D_and_2D_vs_slice_for_non_gradient_metrics_violin_plot <- function(metric_
 metrics_with_4_pairs <- c("AMD",
                           "ANC_AUC",
                           "CK_AUC", "CL_AUC", "CG_AUC",
-                          "COO_AUC")
+                          "FCO_AUC")
 
 
 setwd("~/R/plots/SD2/metrics_with_4_cell_pairs")

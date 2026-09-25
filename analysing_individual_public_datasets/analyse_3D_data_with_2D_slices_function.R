@@ -33,14 +33,14 @@ analyse_3D_data_with_2D_slices <- function(
     AMD_df <- data.frame(matrix(nrow = (n_slices + 1) * n_cell_type_combinations, ncol = length(AMD_df_colnames)))
     colnames(AMD_df) <- AMD_df_colnames
     
-    # Define MS, NMS, ANC, ACIN, COO, ANE data frames as well as constants
+    # Define MS, NMS, ANC, ACIN, FCO, ANE data frames as well as constants
     radii_colnames <- paste("r", radii, sep = "")
     
     MS_df_colnames <- c("slice", "reference", "target", radii_colnames)
     MS_df <- data.frame(matrix(nrow = (n_slices + 1) * n_cell_type_combinations, ncol = length(MS_df_colnames)))
     colnames(MS_df) <- MS_df_colnames
     
-    NMS_df <- ANC_df <- ANE_df <- ACIN_df <- COO_df <- CK_df <- CL_df <- CG_df <- MS_df
+    NMS_df <- ANC_df <- ANE_df <- ACIN_df <- FCO_df <- CK_df <- CL_df <- CG_df <- MS_df
     
     # Define SAC and prevalence data frames as well as constants
     thresholds_colnames <- paste("t", thresholds, sep = "")
@@ -69,7 +69,7 @@ analyse_3D_data_with_2D_slices <- function(
                            ACIN = ACIN_df,
                            ANE = ANE_df,
                            ANC = ANC_df,
-                           COO = COO_df,
+                           FCO = FCO_df,
                            CK = CK_df,
                            CL = CL_df,
                            CG = CG_df,
@@ -132,7 +132,7 @@ analyse_3D_data_with_2D_slices <- function(
           print(paste(reference_cell_type, target_cell_type, sep = "/"))
           metric_df_list[["ANC"]][pair_index, c("slice", "reference", "target")] <- c(i, reference_cell_type, target_cell_type)
           metric_df_list[["ACIN"]][pair_index, c("slice", "reference", "target")] <- c(i, reference_cell_type, target_cell_type)
-          metric_df_list[["COO"]][pair_index, c("slice", "reference", "target")] <- c(i, reference_cell_type, target_cell_type)
+          metric_df_list[["FCO"]][pair_index, c("slice", "reference", "target")] <- c(i, reference_cell_type, target_cell_type)
           metric_df_list[["CK"]][pair_index, c("slice", "reference", "target")] <- c(i, reference_cell_type, target_cell_type)
           metric_df_list[["CL"]][pair_index, c("slice", "reference", "target")] <- c(i, reference_cell_type, target_cell_type)
           metric_df_list[["CG"]][pair_index, c("slice", "reference", "target")] <- c(i, reference_cell_type, target_cell_type)
@@ -144,7 +144,7 @@ analyse_3D_data_with_2D_slices <- function(
           
           if (is.null(gradient_data)) {
             metric_df_list[["ANC"]][pair_index, radii_colnames] <- NA
-            metric_df_list[["COO"]][pair_index, radii_colnames] <- NA
+            metric_df_list[["FCO"]][pair_index, radii_colnames] <- NA
             metric_df_list[["CK"]][pair_index, radii_colnames] <- NA
             metric_df_list[["CL"]][pair_index, radii_colnames] <- NA
             metric_df_list[["CG"]][pair_index, radii_colnames] <- NA
@@ -155,7 +155,7 @@ analyse_3D_data_with_2D_slices <- function(
           }
           else {
             metric_df_list[["ANC"]][pair_index, radii_colnames] <- gradient_data[["neighbourhood_counts"]][[target_cell_type]]
-            metric_df_list[["COO"]][pair_index, radii_colnames] <- gradient_data[["co_occurrence"]][[target_cell_type]]
+            metric_df_list[["FCO"]][pair_index, radii_colnames] <- gradient_data[["fast_co_occurrence"]][[target_cell_type]]
             metric_df_list[["CK"]][pair_index, radii_colnames] <- gradient_data[["cross_K"]][[target_cell_type]] - gradient_data[["cross_K"]][["expected"]]
             metric_df_list[["CL"]][pair_index, radii_colnames] <- gradient_data[["cross_L"]][[target_cell_type]] - gradient_data[["cross_L"]][["expected"]]
             metric_df_list[["CG"]][pair_index, radii_colnames] <- gradient_data[["cross_G"]][[target_cell_type]][["observed_cross_G"]] - gradient_data[["cross_G"]][[target_cell_type]][["expected_cross_G"]]
@@ -275,7 +275,7 @@ analyse_3D_data_with_2D_slices <- function(
           print(paste(reference_cell_type, target_cell_type, sep = "/"))
           metric_df_list[["ANC"]][pair_index, c("slice", "reference", "target")] <- c(i, reference_cell_type, target_cell_type)
           metric_df_list[["ACIN"]][pair_index, c("slice", "reference", "target")] <- c(i, reference_cell_type, target_cell_type)
-          metric_df_list[["COO"]][pair_index, c("slice", "reference", "target")] <- c(i, reference_cell_type, target_cell_type)
+          metric_df_list[["FCO"]][pair_index, c("slice", "reference", "target")] <- c(i, reference_cell_type, target_cell_type)
           metric_df_list[["CK"]][pair_index, c("slice", "reference", "target")] <- c(i, reference_cell_type, target_cell_type)
           metric_df_list[["CL"]][pair_index, c("slice", "reference", "target")] <- c(i, reference_cell_type, target_cell_type)
           metric_df_list[["CG"]][pair_index, c("slice", "reference", "target")] <- c(i, reference_cell_type, target_cell_type)
@@ -287,7 +287,7 @@ analyse_3D_data_with_2D_slices <- function(
           
           if (is.null(gradient_data)) {
             metric_df_list[["ANC"]][pair_index, radii_colnames] <- NA
-            metric_df_list[["COO"]][pair_index, radii_colnames] <- NA
+            metric_df_list[["FCO"]][pair_index, radii_colnames] <- NA
             metric_df_list[["CK"]][pair_index, radii_colnames] <- NA
             metric_df_list[["CL"]][pair_index, radii_colnames] <- NA
             metric_df_list[["CG"]][pair_index, radii_colnames] <- NA
@@ -298,7 +298,7 @@ analyse_3D_data_with_2D_slices <- function(
           }
           else {
             metric_df_list[["ANC"]][pair_index, radii_colnames] <- gradient_data[["neighbourhood_counts"]][[target_cell_type]]
-            metric_df_list[["COO"]][pair_index, radii_colnames] <- gradient_data[["co_occurrence"]][[target_cell_type]]
+            metric_df_list[["FCO"]][pair_index, radii_colnames] <- gradient_data[["fast_co_occurrence"]][[target_cell_type]]
             metric_df_list[["CK"]][pair_index, radii_colnames] <- gradient_data[["cross_K"]][[target_cell_type]] - gradient_data[["cross_K"]][["expected"]]
             metric_df_list[["CL"]][pair_index, radii_colnames] <- gradient_data[["cross_L"]][[target_cell_type]] - gradient_data[["cross_L"]][["expected"]]
             metric_df_list[["CG"]][pair_index, radii_colnames] <- gradient_data[["cross_G"]][[target_cell_type]][["observed_cross_G"]] - gradient_data[["cross_G"]][[target_cell_type]][["expected_cross_G"]]

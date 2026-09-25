@@ -1629,7 +1629,7 @@ metrics <- c("AMD",
              "ANC_AUC", "ACIN_AUC", "ANE_AUC",
              "MS_AUC", "NMS_AUC",
              "CK_AUC", "CL_AUC", "CG_AUC",
-             "COO_AUC",
+             "FCO_AUC",
              "PBP_AUC", "EBP_AUC", "PBSAC", "EBSAC")
 
 
